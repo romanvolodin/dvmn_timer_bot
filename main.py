@@ -6,13 +6,6 @@ import pytimeparse
 import ptbot
 
 
-env = Env()
-env.read_env() 
-
-TG_TOKEN = env.str("TG_TOKEN")
-TG_CHAT_ID = env.int("TG_CHAT_ID")
-
-
 def render_progressbar(total, iteration, prefix='', suffix='', length=30, fill='█', zfill='░'):
     iteration = min(total, iteration)
     percent = "{0:.1f}"
@@ -45,6 +38,12 @@ def reply(time):
 
 
 if __name__ == "__main__":
+    env = Env()
+    env.read_env() 
+
+    TG_TOKEN = env.str("TG_TOKEN")
+    TG_CHAT_ID = env.int("TG_CHAT_ID")
+
     bot = ptbot.Bot(TG_TOKEN)
     bot.send_message(TG_CHAT_ID, "На какое время поставить таймер?")
     bot.reply_on_message(reply)
