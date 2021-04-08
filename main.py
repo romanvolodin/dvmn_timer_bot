@@ -6,6 +6,14 @@ import pytimeparse
 import ptbot
 
 
+def format_progress_message(seconds_total, seconds_left):
+    return render_progressbar(
+        total = seconds_total,
+        iteration = seconds_total - seconds_left,
+        prefix = f"Осталось {seconds_left} секунд\n"
+    )
+
+
 def render_progressbar(total, iteration, prefix='', suffix='', length=30, fill='█', zfill='░'):
     iteration = min(total, iteration)
     percent = "{0:.1f}"
@@ -16,10 +24,9 @@ def render_progressbar(total, iteration, prefix='', suffix='', length=30, fill='
 
 
 def notify_progress(seconds_left, seconds_total, message_id):
-    bot.update_message(TG_CHAT_ID, message_id, render_progressbar(
-        total = seconds_total,
-        iteration = seconds_total - seconds_left
-    ))
+    bot.update_message(
+        TG_CHAT_ID, message_id, format_progress_message(seconds_total, seconds_left)
+    )
 
 
 def notify_time_is_over():
@@ -32,7 +39,9 @@ def reply(time):
         error_message = 'Я так не понимаю.\nНапишите что-то вроде "5s" или "1.2 minutes"'
         bot.send_message(TG_CHAT_ID, error_message)
         return
-    message_id = bot.send_message(TG_CHAT_ID, render_progressbar(parsed_time, 0))
+    message_id = bot.send_message(
+        TG_CHAT_ID, format_progress_message(parsed_time, parsed_time)
+    )
     bot.create_countdown(parsed_time, notify_progress, parsed_time, message_id)
     bot.create_timer(parsed_time, notify_time_is_over)
 
