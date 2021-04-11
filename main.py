@@ -25,22 +25,22 @@ def render_progressbar(total, iteration, prefix='', suffix='', length=30, fill='
 
 def notify_progress(seconds_left, seconds_total, message_id):
     bot.update_message(
-        TG_CHAT_ID, message_id, format_progress_message(seconds_total, seconds_left)
+        tg_chat_id, message_id, format_progress_message(seconds_total, seconds_left)
     )
 
 
 def notify_time_is_over():
-    bot.send_message(TG_CHAT_ID, "Время вышло!")
+    bot.send_message(tg_chat_id, "Время вышло!")
 
 
 def reply(time):
     parsed_time = pytimeparse.parse(time)
     if parsed_time is None:
         error_message = 'Я так не понимаю.\nНапишите что-то вроде "5s" или "1.2 minutes"'
-        bot.send_message(TG_CHAT_ID, error_message)
+        bot.send_message(tg_chat_id, error_message)
         return
     message_id = bot.send_message(
-        TG_CHAT_ID, format_progress_message(parsed_time, parsed_time)
+        tg_chat_id, format_progress_message(parsed_time, parsed_time)
     )
     bot.create_countdown(parsed_time, notify_progress, parsed_time, message_id)
     bot.create_timer(parsed_time, notify_time_is_over)
@@ -50,10 +50,10 @@ if __name__ == "__main__":
     env = Env()
     env.read_env() 
 
-    TG_TOKEN = env.str("TG_TOKEN")
-    TG_CHAT_ID = env.int("TG_CHAT_ID")
+    tg_token = env.str("tg_token")
+    tg_chat_id = env.int("tg_chat_id")
 
-    bot = ptbot.Bot(TG_TOKEN)
-    bot.send_message(TG_CHAT_ID, "На какое время поставить таймер?")
+    bot = ptbot.Bot(tg_token)
+    bot.send_message(tg_chat_id, "На какое время поставить таймер?")
     bot.reply_on_message(reply)
     bot.run_bot()
